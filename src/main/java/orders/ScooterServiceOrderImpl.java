@@ -1,6 +1,8 @@
 package order;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
@@ -14,7 +16,13 @@ public class ScooterServiceOrderImpl implements ScooterServiceOrder {
     private static final String RETURN_LIST_OF_ORDERS_ENDPOINT = "/api/v1/orders";
 
     private static final String ACCEPT_ORDER_ENDPOINT = "/api/v1/orders/accept/{id}";
-    private final RequestSpecification requestSpecification;
+    private static final String RECEIVE_ORDER_BY_TRACK = "/api/v1/orders/track";
+    public static RequestSpecification requestSpecification =
+            new RequestSpecBuilder()
+                    .log(LogDetail.ALL)
+                    .addHeader("Content-type", "application/json")
+                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
+                    .build();
 
     public ScooterServiceOrderImpl(RequestSpecification requestSpecification) {
         this.requestSpecification = requestSpecification;
@@ -64,6 +72,19 @@ public class ScooterServiceOrderImpl implements ScooterServiceOrder {
                 .pathParam("id", id)
                 //.put(ACCEPT_ORDER_ENDPOINT, id);
                 .put(ACCEPT_ORDER_ENDPOINT);
+    }
+
+    @Override
+    public void receiveOrderByNumber(int track) {
+//        return given()
+//                .spec(requestSpecification)
+//                .queryParam("t", track)
+//                .get(RECEIVE_ORDER_BY_TRACK);
+        given()
+                .spec(requestSpecification)
+                .queryParam("t", track)
+                .get(RECEIVE_ORDER_BY_TRACK)
+                .body().as(DetailsOfThtCreatedOrder.class);
     }
 
 }

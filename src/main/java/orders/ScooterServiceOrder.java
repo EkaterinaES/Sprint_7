@@ -7,4 +7,5 @@ public interface ScooterServiceOrder {
     Response cancelOrder(int track);
     Response returnTheListOfOrders();
     Response acceptOrder(int orderId, int courierId);
+    void receiveOrderByNumber(int track);
 }
