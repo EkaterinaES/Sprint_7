@@ -23,13 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.in;
 
 public class CreatingCourierTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification responseSpecification =
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -40,7 +34,7 @@ public class CreatingCourierTest {
     public void setUp() {
         courier = new Courier(("skorokhod" + new Random().nextInt(300)), "12345", "Peter");
         courierLP = new CourierLoginPasswd(courier.getLogin(), courier.getPassword());
-        courierAll = new ScooterServiceCourierImpl(REQUEST_SPECIFICATION);
+        courierAll = new ScooterServiceCourierImpl(ScooterServiceCourierImpl.requestSpecification);
     }
 
     @Test
@@ -48,7 +42,7 @@ public class CreatingCourierTest {
     @Description("Send POST request to /api/v1/courier")
     public void createCourierTest() {
         Response response = courierAll.createCourierTest(courier);
-        response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("ok", equalTo(true))
+        response.then().spec(responseSpecification).assertThat().body("ok", equalTo(true))
                 .and()
                 .statusCode(201);
     }

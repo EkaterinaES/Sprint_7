@@ -20,13 +20,7 @@ import java.util.Random;
 import static org.hamcrest.Matchers.equalTo;
 
 public class DeleteCourierTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification responseSpecification =
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -40,7 +34,7 @@ public class DeleteCourierTest {
     public void setUp() {
         courier = new Courier(("skorokhod" + new Random().nextInt(300)), "12345", "Peter");
         courierLP = new CourierLoginPasswd(courier.getLogin(), courier.getPassword());
-        courierAll = new ScooterServiceCourierImpl(REQUEST_SPECIFICATION);
+        courierAll = new ScooterServiceCourierImpl(ScooterServiceCourierImpl.requestSpecification);
     }
 
     @Test
@@ -52,7 +46,7 @@ public class DeleteCourierTest {
         int id = response.then().extract().body().path("id");
         String cId = String.valueOf(id);
         Response responseForDelete = courierAll.deleteCourierTest(cId);
-        responseForDelete.then().spec(RESPONSE_SPECIFICATION).assertThat().body("ok", equalTo(true))
+        responseForDelete.then().spec(responseSpecification).assertThat().body("ok", equalTo(true))
                 .and()
                 .statusCode(200);
     }
@@ -62,7 +56,7 @@ public class DeleteCourierTest {
     @Description("Send DELETE request to /api/v1/courier/:id")
     public void DeleteCourierWithNonExistentId() {
         Response responseForDelete = courierAll.deleteCourierTest(nonExistentId);
-        responseForDelete.then().spec(RESPONSE_SPECIFICATION).assertThat().body("message", equalTo("Курьера с таким id нет."))
+        responseForDelete.then().spec(responseSpecification).assertThat().body("message", equalTo("Курьера с таким id нет."))
                 .and()
                 .statusCode(404);
     }
@@ -71,7 +65,7 @@ public class DeleteCourierTest {
     @Description("Send DELETE request to /api/v1/courier/:id")
     public void DeleteCourierWithoutId() {//тест падает, так как: ОР: код 400 Bad Request. и текст "Недостаточно данных для удаления курьера", а ФР:"code": 404, Not Found.
         Response response = courierAll.deleteCourierTest(withoutId);
-        response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("message", equalTo("Недостаточно данных для удаления курьера"))
+        response.then().spec(responseSpecification).assertThat().body("message", equalTo("Недостаточно данных для удаления курьера"))
                 .and()
                 .statusCode(400);
     }

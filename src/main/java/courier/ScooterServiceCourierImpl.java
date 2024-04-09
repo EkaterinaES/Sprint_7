@@ -2,6 +2,8 @@ package courier;
 
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestLogSpecification;
 import io.restassured.specification.RequestSpecification;
@@ -12,7 +14,12 @@ import static io.restassured.RestAssured.requestSpecification;
 
 
 public class ScooterServiceCourierImpl implements ScooterServiceCourier {
-    private final RequestSpecification requestSpecification;
+    public static RequestSpecification requestSpecification =
+            new RequestSpecBuilder()
+                    .log(LogDetail.ALL)
+                    .addHeader("Content-type", "application/json")
+                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
+                    .build();
 
     public ScooterServiceCourierImpl(RequestSpecification requestSpecification) {
         this.requestSpecification = requestSpecification;

@@ -2,15 +2,13 @@ package ordertest;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import order.OrderDetails;
-import order.ScooterServiceOrder;
-import order.ScooterServiceOrderImpl;
+import orders.OrderDetails;
+import orders.ScooterServiceOrder;
+import orders.ScooterServiceOrderImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +19,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 @RunWith(Parameterized.class)
 public class OrderTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification responseSpecification =
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -68,7 +60,7 @@ public class OrderTest {
     @Before
     public void setUp() {
         orderDetails = new OrderDetails(FIRST_NAME, LAST_NAME, ADDRESS, METRO_STATION, PHONE, RENTAL_TIME, DELIVERY_DATE, COMMENT, COLOR);
-        orderMethods = new ScooterServiceOrderImpl(REQUEST_SPECIFICATION);
+        orderMethods = new ScooterServiceOrderImpl(ScooterServiceOrderImpl.requestSpecification);
 
     }
 
@@ -77,19 +69,10 @@ public class OrderTest {
     @Description("Send POST request to /api/v1/orders")
     public void checkTrackInResponse() {
         Response response = orderMethods.createTheOrder(orderDetails);
-        response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("track", notNullValue())
+        response.then().spec(responseSpecification).assertThat().body("track", notNullValue())
                 .and()
                 .statusCode(201);
     }
-//    @Test
-//    public void cancelTest(){
-//        Response response = orderMethods.createTheOrder(orderDetails);
-//        int trackNumber = response.then().extract().body().path("track");
-//        Response response1 = orderMethods.cancelOrder(trackNumber);
-//        response1.then().log().all().assertThat().body("ok", equalTo(true))
-//                .and()
-//                .statusCode(200);
-//    }
 
     @After public void cleanUp() {//удаление созданного заказа
         Response response = orderMethods.createTheOrder(orderDetails);

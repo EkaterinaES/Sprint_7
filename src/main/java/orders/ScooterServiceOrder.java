@@ -1,4 +1,4 @@
-package order;
+package orders;
 
 import io.restassured.response.Response;
 
@@ -7,5 +7,5 @@ public interface ScooterServiceOrder {
     Response cancelOrder(int track);
     Response returnTheListOfOrders();
     Response acceptOrder(int orderId, int courierId);
-    void receiveOrderByNumber(int track);
+    DetailsOfThtCreatedOrder receiveOrderByNumber(int track);
 }

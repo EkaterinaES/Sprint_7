@@ -1,6 +1,5 @@
-package order;
+package orders;
 
-import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.response.Response;
@@ -75,16 +74,18 @@ public class ScooterServiceOrderImpl implements ScooterServiceOrder {
     }
 
     @Override
-    public void receiveOrderByNumber(int track) {
-//        return given()
-//                .spec(requestSpecification)
-//                .queryParam("t", track)
-//                .get(RECEIVE_ORDER_BY_TRACK);
-        given()
+    public DetailsOfThtCreatedOrder receiveOrderByNumber(int track) {
+        DetailsOfThtCreatedOrder object;
+        return   object = given()
                 .spec(requestSpecification)
                 .queryParam("t", track)
                 .get(RECEIVE_ORDER_BY_TRACK)
                 .body().as(DetailsOfThtCreatedOrder.class);
+//        given()
+//                .spec(requestSpecification)
+//                .queryParam("t", track)
+//                .get(RECEIVE_ORDER_BY_TRACK)
+//                .body().as(DetailsOfThtCreatedOrder.class);
     }
 
 }

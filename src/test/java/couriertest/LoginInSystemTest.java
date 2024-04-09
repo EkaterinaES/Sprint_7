@@ -21,13 +21,7 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class LoginInSystemTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification responseSpecification =
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -40,7 +34,7 @@ public class LoginInSystemTest {
     public void setUp() {
         courier = new Courier(("skorokhod" + new Random().nextInt(300)), "12345", "Peter");
         courierLP = new CourierLoginPasswd(courier.getLogin(), courier.getPassword());
-        courierAll = new ScooterServiceCourierImpl(REQUEST_SPECIFICATION);
+        courierAll = new ScooterServiceCourierImpl(ScooterServiceCourierImpl.requestSpecification);
     }
 
     @Test
@@ -49,7 +43,7 @@ public class LoginInSystemTest {
     public void loginTest() {//успешная авторизация возвращает id и код 200
         courierAll.createCourierTest(courier);
         Response response = courierAll.loginWithReturnResponse(courierLP);
-        response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("id", notNullValue())//проверили, что id заполнен
+        response.then().spec(responseSpecification).assertThat().body("id", notNullValue())//проверили, что id заполнен
                 .and()
                 .statusCode(200);
         int id = response.then().extract().body().path("id");//получили id из ответа

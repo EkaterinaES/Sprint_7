@@ -1,4 +1,4 @@
-package order;
+package orders;
 
 public class Order {
     private int id;

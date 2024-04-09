@@ -18,13 +18,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class LoginNotExistentCourierTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification responseSpecification =
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -37,14 +31,14 @@ public class LoginNotExistentCourierTest {
     @Before
     public void setUp() {
         courierLP = new CourierLoginPasswd(login, password);
-        courierAll = new ScooterServiceCourierImpl(REQUEST_SPECIFICATION);
+        courierAll = new ScooterServiceCourierImpl(ScooterServiceCourierImpl.requestSpecification);
     }
         @Test
         @DisplayName("Login in system with non-existent login and password")
         @Description("Send POST request to /api/v1/courier/login")
         public void notExistentLoginAndPasswordTest () {
             Response response = courierAll.loginWithReturnResponse(courierLP);
-            response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("message", equalTo("Учетная запись не найдена"))
+            response.then().spec(responseSpecification).assertThat().body("message", equalTo("Учетная запись не найдена"))
                     .and()
                     .statusCode(404);
         }

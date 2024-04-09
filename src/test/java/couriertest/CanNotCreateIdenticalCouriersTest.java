@@ -21,13 +21,7 @@ import java.util.Random;
 import static org.hamcrest.Matchers.equalTo;
 
 public class CanNotCreateIdenticalCouriersTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification responseSpecification =
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -39,7 +33,7 @@ public class CanNotCreateIdenticalCouriersTest {
     public void setUp() {
         courier = new Courier(("skorokhod" + new Random().nextInt(300)), "12345", "Peter");
         courierLP = new CourierLoginPasswd(courier.getLogin(), courier.getPassword());
-        courierAll = new ScooterServiceCourierImpl(REQUEST_SPECIFICATION);
+        courierAll = new ScooterServiceCourierImpl(ScooterServiceCourierImpl.requestSpecification);
     }
     @Test
     @DisplayName("Do not create couriers with the same login")
@@ -47,7 +41,7 @@ public class CanNotCreateIdenticalCouriersTest {
     public void theSameLogin(){//этот тест падает, так как тест ошибки не соответствует тексту в документации
         courierAll.createCourierTest(courier);
         Response response = courierAll.createCourierTest(courier);
-        response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("message", equalTo("Этот логин уже используется"))
+        response.then().spec(responseSpecification).assertThat().body("message", equalTo("Этот логин уже используется"))
                 .and()
                 .statusCode(409);
     }

@@ -5,11 +5,9 @@ import courier.ScooterServiceCourier;
 import courier.ScooterServiceCourierImpl;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +17,7 @@ import org.junit.runners.Parameterized;
 import static org.hamcrest.Matchers.equalTo;
 @RunWith(Parameterized.class)
 public class CannotBeCreatedWithoutLoginTest {
-    private static final RequestSpecification REQUEST_SPECIFICATION =
-            new RequestSpecBuilder()
-                    .log(LogDetail.ALL)
-                    .addHeader("Content-type", "application/json")
-                    .setBaseUri("https://qa-scooter.praktikum-services.ru/")
-                    .build();
-    private static final ResponseSpecification RESPONSE_SPECIFICATION =
+    public static ResponseSpecification  responseSpecification=
             new ResponseSpecBuilder()
                     .log(LogDetail.ALL)
                     .build();
@@ -43,7 +35,7 @@ public class CannotBeCreatedWithoutLoginTest {
 
     @Before
     public void setUp() {
-        courierAll = new ScooterServiceCourierImpl(REQUEST_SPECIFICATION);
+        courierAll = new ScooterServiceCourierImpl(ScooterServiceCourierImpl.requestSpecification);
     }
 
     @Parameterized.Parameters
@@ -60,7 +52,7 @@ public class CannotBeCreatedWithoutLoginTest {
     public void withoutLoginTest() {
         courier = new Courier(LOGIN, PASSWORD, FIRST_NAME);
         Response response = courierAll.createCourierTest(courier);
-        response.then().spec(RESPONSE_SPECIFICATION).assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        response.then().spec(responseSpecification).assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
                 .and()
                 .statusCode(400);
     }
